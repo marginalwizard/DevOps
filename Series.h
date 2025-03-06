@@ -7,8 +7,9 @@ public:
     Series() {}
     virtual ~Series() {}
     
-    // повертає 0 
-    double FuncA();
+    // обчислення  значення arccos(x) використовуючи 3 елементи ряду
+    // x - аргумент функції, |x| < 1
+    double FuncA(double x);
 };
 
 #endif
