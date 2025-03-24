@@ -33,3 +33,17 @@ series
 *.exe
 *.out
 *.app
+
+.deps/
+*.in
+aclocal.m4
+autom4te.cache/
+build-aux/
+compile
+config.log
+config.status
+configure
+*~
+*.deb
+*.tar.gz
+deb/
