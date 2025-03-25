@@ -1,0 +1,42 @@
+name: C++ CI - Debian Package
+
+on:
+  push:
+    branches: [ branchAutoPackage ]
+  pull_request:
+    branches: [ branchAutoPackage ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake libtool build-essential \
+                                dh-make debhelper dpkg-dev fakeroot lintian
+
+    - name: Generate configure script
+      run: autoreconf -i
+
+    - name: Configure
+      run: ./configure
+
+    - name: Build
+      run: make
+
+    - name: Install files for packaging
+      run: make install DESTDIR=./debian_package
+
+    - name: Build Debian package
+      run: |
+        dpkg-buildpackage -us -uc
+
+    - name: Upload Debian package
+      uses: actions/upload-artifact@v4
+      with:
+        name: debian-package
+        path: ../*.deb
