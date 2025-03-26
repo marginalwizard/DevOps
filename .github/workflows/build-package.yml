@@ -23,9 +23,9 @@ jobs:
     - name: Build Debian package
       run: |
         make deb
-        dpkg-deb --build deb
+        dpkg-deb --build deb series_0.1_all.deb
     - name: Upload Debian package
       uses: actions/upload-artifact@v4
       with:
         name: debian-package
-        path: deb.deb
+        path: series_0.1_all.deb
