@@ -1,0 +1,17 @@
+name: C++ CI (Make)
+on:
+  push:
+    branches: [ branchMake ]
+  pull_request:
+    branches: [ branchMake ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential g++
+    - name: Build with Make
+      run: make
