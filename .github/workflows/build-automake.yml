@@ -1,0 +1,23 @@
+name: C++ CI (Automake)
+on:
+  push:
+    branches: [ branchAutomake ]
+  pull_request:
+    branches: [ branchAutomake ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential g++ autoconf automake
+    - name: Run autoreconf
+      run: autoreconf -i
+    - name: Configure
+      run: ./configure
+    - name: Build with Make
+      run: make
+    - name: Create distribution tarball
+      run: make dist
