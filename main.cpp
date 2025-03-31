@@ -3,40 +3,58 @@
 #include <iostream>
 #include <limits>
 
+int CreateHTTPserver();
+
 int main()
 {
-    Series series;
-    double x;
-    int n;
+    int choice;
     
-    // Введення x з перевіркою, що |x| < 1
-    do {
-        std::cout << "Введіть значення x (|x| < 1): ";
-        std::cin >> x;
+    std::cout << "Виберіть режим роботи:" << std::endl;
+    std::cout << "1. Обчислення arccos(x)" << std::endl;
+    std::cout << "2. Запуск HTTP сервера" << std::endl;
+    std::cout << "Ваш вибір (1 або 2): ";
+    std::cin >> choice;
+    
+    if (choice == 2) {
+        std::cout << "Запуск HTTP сервера на порту 8081..." << std::endl;
+        std::cout << "Доступ до /compute для обчислення та сортування." << std::endl;
+        return CreateHTTPserver();
+    }
+    else {
+        // обчислення arccos
+        Series series;
+        double x;
+        int n;
         
-        if (std::cin.fail() || std::abs(x) >= 1.0) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Некоректне значення. |x| має бути менше 1." << std::endl;
-        } else {
-            break;
-        }
-    } while (true);
-    
-    // Введення n з перевіркою, що n > 0
-    do {
-        std::cout << "Введіть кількість елементів ряду n (n > 0): ";
-        std::cin >> n;
+        // Введення x з перевіркою, що |x| < 1
+        do {
+            std::cout << "Введіть значення x (|x| < 1): ";
+            std::cin >> x;
+            
+            if (std::cin.fail() || std::abs(x) >= 1.0) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Некоректне значення. |x| має бути менше 1." << std::endl;
+            } else {
+                break;
+            }
+        } while (true);
         
-        if (std::cin.fail() || n <= 0) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Некоректне значення. n має бути більше 0." << std::endl;
-        } else {
-            break;
-        }
-    } while (true);
-    
-    std::cout << "Result: " << series.FuncA(x, n) << std::endl;
-    return 0;
+        // Введення n з перевіркою, що n > 0
+        do {
+            std::cout << "Введіть кількість елементів ряду n (n > 0): ";
+            std::cin >> n;
+            
+            if (std::cin.fail() || n <= 0) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Некоректне значення. n має бути більше 0." << std::endl;
+            } else {
+                break;
+            }
+        } while (true);
+        
+        std::cout << "Result: " << series.FuncA(x, n) << std::endl;
+        return 0;
+    }
 }

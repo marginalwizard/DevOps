@@ -48,5 +48,15 @@ configure
 *.tar.gz
 deb/
 
-*~
 Makefile
+
+.dirstamp
+depcomp
+install-sh
+missing
+test-driver
+
+tests/*test*
+tests/*.log
+tests/*.trs
+tests/test-suite.log

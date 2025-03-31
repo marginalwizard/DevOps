@@ -1,10 +1,14 @@
-AUTOMAKE_OPTIONS = foreign
+AUTOMAKE_OPTIONS = foreign subdir-objects
 bin_PROGRAMS = series
-series_SOURCES = main.cpp Series.cpp Series.h
+series_SOURCES = main.cpp Series.cpp Series.h HTTP_Server.cpp
 dist_man_MANS = series.1
 nobase_dist_pkgdata_DATA = data.txt
+
+SUBDIRS = tests
+
 CTRLF_DIR=$(CURDIR)/deb/DEBIAN
 CTRLF_NAME=$(CTRLF_DIR)/control
+
 .PHONY: deb debug
 deb:
 	mkdir -p $(CTRLF_DIR)

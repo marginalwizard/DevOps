@@ -4,5 +4,5 @@ AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_PROG_CXX      # search cpp compiler
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile tests/Makefile]) # recursive makefile
 AC_OUTPUT
