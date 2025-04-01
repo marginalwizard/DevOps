@@ -13,10 +13,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential autoconf automake
-
-      - name: Ensure configure is executable
-        run: chmod +x configure
+          sudo apt-get install -y build-essential autoconf automake libtool
+      
+      - name: Generate configure script
+        run: autoreconf -fi
       
       - name: Run configure
         run: ./configure
@@ -37,9 +37,8 @@ jobs:
     needs: [build_check, qemu_install]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
+      
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -55,7 +54,7 @@ jobs:
       - name: Build and push for AMD64
         uses: docker/build-push-action@v2
         with:
-          context: ./warlock-host  # Використовуємо ваш Dockerfile з папки warlock-host
+          context: ./warlock-host
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64
@@ -63,7 +62,7 @@ jobs:
       - name: Build and push for ARM64
         uses: docker/build-push-action@v2
         with:
-          context: ./warlock-host  # Використовуємо ваш Dockerfile з папки warlock-host
+          context: ./warlock-host
           platforms: linux/arm64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64
