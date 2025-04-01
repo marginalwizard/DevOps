@@ -70,7 +70,7 @@ jobs:
           context: ./warlock-host
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64
+          tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-${{ github.run_number }}
           
       - name: Build and push for ARM64
         uses: docker/build-push-action@v5
@@ -78,11 +78,16 @@ jobs:
           context: ./warlock-host
           platforms: linux/arm64
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64
+          tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-${{ github.run_number }}
           
       - name: Create and push manifest
         run: |
           docker manifest create ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest \
-            ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64 \
-            ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64
+            ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-${{ github.run_number }} \
+            ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-${{ github.run_number }}
           docker manifest push ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest
+          
+          docker manifest create ${{ secrets.DOCKER_USERNAME }}/warlock-server:v${{ github.run_number }} \
+            ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-${{ github.run_number }} \
+            ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-${{ github.run_number }}
+          docker manifest push ${{ secrets.DOCKER_USERNAME }}/warlock-server:v${{ github.run_number }}
