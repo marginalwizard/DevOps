@@ -83,10 +83,11 @@ jobs:
           platforms: linux/arm64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-${{ steps.timestamp.outputs.timestamp }}
-          
+     
       - name: Create and push manifest
         run: |
           docker manifest create ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest \
-            ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-${{ steps.timestamp.outputs.timestamp }} \
-            ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-${{ steps.timestamp.outputs.timestamp }}
+            --amend ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-${{ github.run_number }} \
+            --amend ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-${{ github.run_number }}
           docker manifest push ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest
+
