@@ -63,26 +63,20 @@ jobs:
       
       - name: Build AMD64 image
         run: |
-          docker buildx build \
-            --platform linux/amd64 \
-            --push \
-            -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64 \
-            ./warlock-host
+          docker build --platform=linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64 ./warlock-host
+          docker push ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64
       
       - name: Build ARM64 image
         run: |
-          docker buildx build \
-            --platform linux/arm64 \
-            --push \
-            -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64 \
-            ./warlock-host
+          docker build --platform=linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64 ./warlock-host
+          docker push ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64
       
       - name: Create manifest
         run: |
           docker manifest create ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest \
-            --amend ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64 \
-            --amend ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64
-    
+            ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64 \
+            ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64
+      
       - name: Push manifest to Docker Hub
         run: |
           docker manifest push ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest
