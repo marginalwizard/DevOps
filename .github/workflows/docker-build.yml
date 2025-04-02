@@ -1,12 +1,14 @@
-name: Build and Push Docker Images
+name: Build and Push Multi-Architecture Docker Images
 on:
   push:
     branches: [ branchHTTPserver ]
+
 jobs:
   build_project:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       
       - name: Install dependencies
         run: |
@@ -27,42 +29,58 @@ jobs:
           mkdir -p warlock-host
           cp series warlock-host/
           cp start-server.sh warlock-host/
+          cp Dockerfile warlock-host/
       
       - name: Upload warlock-host folder
         uses: actions/upload-artifact@v4
         with:
           name: warlock-host
           path: warlock-host/
-          
+  
   build_and_push:
-    needs: [build_project]
+    needs: build_project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
       - name: Download warlock-host folder
         uses: actions/download-artifact@v4
         with:
           name: warlock-host
           path: warlock-host
       
-      - name: Set up QEMU
+      - name: QEMU Install
         uses: docker/setup-qemu-action@v3
-        
-      - name: Set up Docker Buildx
+      
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
-      - name: Login to DockerHub
+      
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
       
-      - name: Build and push multi-architecture image
+      - name: Build AMD64 image
         run: |
-          docker buildx create --use
           docker buildx build \
-            --platform linux/amd64,linux/arm64 \
+            --platform linux/amd64 \
             --push \
-            -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest \
+            -t ${{ secrets.DOCKER_USERNAME }}/series:amd64 \
             ./warlock-host
+    
+      - name: Build ARM64 image
+        run: |
+          docker buildx build \
+            --platform linux/arm64 \
+            --push \
+            -t ${{ secrets.DOCKER_USERNAME }}/series:arm64 \
+            ./warlock-host
+      
+      - name: Create manifest
+        run: |
+          docker manifest create ${{ secrets.DOCKER_USERNAME }}/series:latest \
+            --amend ${{ secrets.DOCKER_USERNAME }}/series:amd64 \
+            --amend ${{ secrets.DOCKER_USERNAME }}/series:arm64
+      
+      - name: Push manifest to Docker Hub
+        run: |
+          docker manifest push ${{ secrets.DOCKER_USERNAME }}/series:latest
