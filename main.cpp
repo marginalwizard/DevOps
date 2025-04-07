@@ -2,12 +2,45 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <sys/wait.h>
+#include <signal.h>
 
 int CreateHTTPserver();
+
+void sigchldHandler(int s)
+{
+    pid_t pid;
+    int status;
+    
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
+    {
+        if (WIFEXITED(status)) printf("\nChild process terminated\n");
+    }
+}
+
+void sigintHandler(int s)
+{
+    printf("Caught signal %d. Starting graceful exit procedure\n", s);
+    
+    pid_t pid;
+    int status;
+    
+    while ((pid = waitpid(-1, &status, 0)) > 0)
+    {
+        if (WIFEXITED(status)) printf("\nChild process terminated\n");
+    }
+    
+    if (pid == -1) printf("\nAll child processes terminated\n");
+    
+    exit(EXIT_SUCCESS);
+}
 
 int main()
 {
     int choice;
+    
+    signal(SIGCHLD, sigchldHandler);
+    signal(SIGINT, sigintHandler);
     
     std::cout << "Виберіть режим роботи:" << std::endl;
     std::cout << "1. Обчислення arccos(x)" << std::endl;
