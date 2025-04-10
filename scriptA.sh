@@ -15,7 +15,11 @@ start_container() {
     local name=$1
     local cpu=$2
     echo "Starting $name on CPU #$cpu"
-    docker run --name $name -d --cpuset-cpus $cpu --entrypoint="" svitlana023/warlock-server /bin/sh -c "cd /home/warlock-host && chmod +x series && echo '2' | ./series"
+    
+    docker run --name $name -d --cpuset-cpus $cpu svitlana023/warlock-server
+    
+    echo "Waiting for $name to be ready..."
+    sleep 5
 }
 
 container_exists() {
@@ -32,7 +36,14 @@ stop_container() {
     local name=$1
     echo "Stopping $name..."
     docker kill --signal=SIGINT $name
-    docker wait $name
+    
+    timeout 30s docker wait $name || docker kill $name
+    
+    if docker ps -q --filter "name=$name" | grep -q .; then
+        echo "Force stopping $name..."
+        docker kill $name
+    fi
+    
     docker rm $name
     echo "$name removed"
 }
