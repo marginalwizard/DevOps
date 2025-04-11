@@ -40,10 +40,6 @@ jobs:
           ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-new \
           ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-new
       
-      - name: Push manifest to Docker Hub
-        run: |
-          docker manifest push ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest
-      
       - name: Test server functionality
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest
