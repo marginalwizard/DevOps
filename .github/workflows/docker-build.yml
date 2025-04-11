@@ -33,9 +33,10 @@ jobs:
           -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-new \
           --push ./warlock-host
 
-      - name: Create manifest
+      - name: Create and push manifest
         run: |
-          docker manifest create ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest \
+          docker buildx imagetools create \
+          -t ${{ secrets.DOCKER_USERNAME }}/warlock-server:latest \
           ${{ secrets.DOCKER_USERNAME }}/warlock-server:amd64-new \
           ${{ secrets.DOCKER_USERNAME }}/warlock-server:arm64-new
       
