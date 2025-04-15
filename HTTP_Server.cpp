@@ -166,8 +166,8 @@ int CreateHTTPserver()
 			int iMS = int_ms.count();
 			
 			char strTimeEllapsed[20];
-			sprintf(strTimeEllapsed, "%i", iMS);
-			sprintf(strResponse, "%sContent-Type: text/html\r\nContent-Length: %ld\r\n\r\n", 
+			sprintf(strTimeEllapsed, "%i - Server Version 2.0", iMS);
+			sprintf(strResponse, "%sContent-Type: text/html\r\nContent-Length: %ld\r\nX-Version: 2.0\r\n\r\n", 
 				       	HTTP_200HEADER, strlen(strTimeEllapsed));
 			
 			write(clientSocket, strResponse, strlen(strResponse));
